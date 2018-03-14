@@ -1,0 +1,5 @@
+.coverage
+.pytest_cache/
+*.pyc
+__pycache__
+place.egg-info/
