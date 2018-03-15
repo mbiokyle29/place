@@ -16,7 +16,7 @@ jobs:
           command: |
             python3 -m venv ~/place_venv
             . ~/place_venv/bin/activate
-            pip install -r requirements_dev.txt --upgrade
+            pip install -r requirements.txt -r requirements_dev.txt --upgrade
       - save_cache:
           key: deps-{{ checksum "requirements.txt" }}-{{ checksum "requirements_dev.txt" }}
           paths:
