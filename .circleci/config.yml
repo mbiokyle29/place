@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  test-and-lint:
+  build:
     docker:
       - image: python:3.6.1
     working_directory: ~/place
