@@ -1,0 +1,33 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: python:3.6.1
+    working_directory: ~/place
+    branches:
+      ignore:
+        - master
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps-{{ checksum "requirements.txt" }}-{{ checksum "requirements_dev.txt" }}
+      - run:
+          name: Make venv and install deps
+          command: |
+            python3 -m venv ~/place_venv
+            . ~/place_venv/bin/activate
+            pip install -r requirements.txt -r requirements_dev.txt --upgrade
+      - save_cache:
+          key: deps-{{ checksum "requirements.txt" }}-{{ checksum "requirements_dev.txt" }}
+          paths:
+            - "~/place_venv"
+      - run:
+          name: Run tests
+          command: |
+            . ~/place_venv/bin/activate
+            make test
+      - run:
+          name: Run lint
+          command: |
+            . ~/place_venv/bin/activate
+            make lint
