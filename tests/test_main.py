@@ -20,6 +20,26 @@ class TestMainCli(unittest.TestCase):
         result = self.runner.invoke(cli, ["foo"])
         self.assertEqual(result.exit_code, -1)
 
+    def test_cli_verbose(self):
+        """ Test that cli sets the log level to info when given --verbose/-v """
+        for verbose_flag in ["--verbose", "-v"]:
+            with self.runner.isolated_filesystem() as fs:
+                source_file = NamedTemporaryFile(dir=fs, suffix=".txt", delete=False)
+                target_name = os.path.join(fs, "foo.txt")
+                result = self.runner.invoke(cli, [verbose_flag, source_file.name, target_name])
+
+                self.assertEqual(result.exit_code, 0)
+
+    def test_cli_debug(self):
+        """ Test that cli sets the log level to debug when given --debug/-d """
+        with self.runner.isolated_filesystem() as fs:
+            source_file = NamedTemporaryFile(dir=fs, suffix=".txt", delete=False)
+            target_name = os.path.join(fs, "foo.txt")
+            result = self.runner.invoke(cli, ["--debug", source_file.name, target_name])
+
+            self.assertEqual(result.exit_code, 0)
+            self.assertIn("DEBUG", result.output)
+
     def test_cli_rename_file(self):
         """ Test that cli renames a file when given 1 source and 1 target (not dir) """
         with self.runner.isolated_filesystem() as fs:
