@@ -6,10 +6,11 @@ import sys
 
 from click import argument, command, option, Path
 
+from place.lib.config import PlaceConfig
 from place.lib.utils import is_dir, configure_logger
 
 
-root_logger = logging.getLogger("")
+root_logger = logging.getLogger("place")
 
 
 @command()
@@ -19,9 +20,15 @@ root_logger = logging.getLogger("")
 @option("-d", "--debug", default=False, is_flag=True, help="Enable debug logging.")
 def cli(sources, target, verbose, debug):
     """ mv file(s) in SOURCES to TARGET while updating config files """
-    log_level = logging.INFO if verbose else logging.WARN
-    log_level = logging.DEBUG if debug else log_level
-    configure_logger(root_logger, log_level)
+    config_kwargs = PlaceConfig.readConfigFiles(os.getcwd())
+
+    if verbose:
+        config_kwargs["verbose"] = True
+    if debug:
+        config_kwargs["debug"] = True
+
+    config = PlaceConfig.fromKwargs(**config_kwargs)
+    configure_logger(root_logger, config.log_level)
 
     # rename - 1 source, target must not be a dir
     if len(sources) == 1 and not is_dir(target):

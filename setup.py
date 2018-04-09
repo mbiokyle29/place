@@ -26,12 +26,19 @@ setup(
     author="Kyle McChesney",
     author_email="mbiokyle29@gmail.com",
     url="https://github.com/mbiokyle29/place",
-    packages=["place"],
+    packages=["place", "place.lib"],
+    package_dir={
+        "place": "place",
+        "place.lib": "place/lib"
+    },
+    include_package_data=True,
+    package_data={
+        "place": ["data/.placerc"]
+    },
     entry_points="""
         [console_scripts]
         place=place.main:cli
     """,
-    include_package_data=True,
     install_requires=requirements,
     zip_safe=False,
     keywords="place",
