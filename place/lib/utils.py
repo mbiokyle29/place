@@ -4,7 +4,7 @@ import logging
 import os.path as path
 
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("place.lib.utils")
 
 
 def is_dir(input_path):
