@@ -4,3 +4,4 @@
 __pycache__
 place.egg-info/
 build/
+dist/
