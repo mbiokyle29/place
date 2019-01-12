@@ -1,12 +1,9 @@
 version: 2
 jobs:
-  build:
+  install-venv:
     docker:
       - image: python:3.6.1
     working_directory: ~/place
-    branches:
-      ignore:
-        - master
     steps:
       - checkout
       - restore_cache:
@@ -21,13 +18,49 @@ jobs:
           key: deps-{{ checksum "requirements.txt" }}-{{ checksum "requirements_dev.txt" }}
           paths:
             - "~/place_venv"
+  test:
+    docker:
+      - image: python:3.6.1
+    working_directory: ~/place
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps-{{ checksum "requirements.txt" }}-{{ checksum "requirements_dev.txt" }}
       - run:
           name: Run tests
           command: |
             . ~/place_venv/bin/activate
             make test
+  lint:
+    docker:
+      - image: python:3.6.1
+    working_directory: ~/place
+    steps:
+      - checkout
+      - restore_cache:
+          key: deps-{{ checksum "requirements.txt" }}-{{ checksum "requirements_dev.txt" }}
       - run:
           name: Run lint
           command: |
             . ~/place_venv/bin/activate
             make lint
+workflows:
+  version: 2
+  test-and-lint:
+    jobs:
+      - install-venv:
+        filters:
+          branches:
+            ignore: master
+      - lint:
+        filters:
+          branches:
+            ignore: master
+        requires:
+          - install-venv
+      - test:
+        filters:
+          branches:
+            ignore: master
+        requires:
+          - lint
